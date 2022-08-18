@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'drf_yasg',
 
     #my_apps
-    'vakansii'
+    'vakansii',
+    'account'
 
 ]
 
