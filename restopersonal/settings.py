@@ -45,10 +45,12 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
+    # 'users.apps.UsersConfig',
 
     #my_apps
+    'account',
     'vakansii',
-    'account'
+
 
 ]
 
@@ -97,6 +99,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'account.CustomUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

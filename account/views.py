@@ -10,7 +10,6 @@ from . import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.generics import GenericAPIView
 # from account import serializers
-from .tasks import send_activation_code, send_confirmation_email
 
 User = get_user_model()
 
