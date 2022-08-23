@@ -4,12 +4,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model
-from django.contrib.auth.views import LogoutView
 from .send_email import send_confirmation_email, send_reset_password
 from . import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.generics import GenericAPIView
-# from account import serializers
 
 User = get_user_model()
 
@@ -66,7 +64,7 @@ class ResetPasswordView(APIView):
 class PasswordResetApiView(APIView):
 
     def post(self, request):
-        serializer = serializers.PasswordResetApiSerializer(data=request.data)
+        serializer = serializers.PasswordResetSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = User.objects.get(email=serializer.data.get('email'))
             user.is_active = False
