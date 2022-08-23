@@ -42,6 +42,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/account/', include('account.urls')),
     path('api/v1/', include('vakansii.urls')),
+    path('api/v1/', include('reziume.urls')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
