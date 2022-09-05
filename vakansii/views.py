@@ -1,46 +1,42 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from rest_framework import generics, status, permissions
+from rest_framework import generics, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from account.permissions import IsAuthor
-from otklic.models import Otklic
-from . import serializers
+from otklic.models import Otclik
+
 from vakansii.models import Vacansii
-from .serializers import VakansiiSerializer
+from . import serializers, permissions
+from .serializers import VakansiiSerializer, UserVakansiiSerializer
 
 
 class VacansiiViewSet(ModelViewSet):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, ]
     queryset = Vacansii.objects.all()
     serializer_class = VakansiiSerializer
     #
+
     def perform_create(self, serializer):
-        return serializer.save(user=self.request.user)
+        serializer.validated_data['owner'] = self.request.user
+        serializer.save()
 
-    @action(['POST'], detail=True)
-    def add_to_otklic(self, request, pk):
+
+class UserVacansiiList(generics.ListAPIView):
+    """Все объявления пользователя"""
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserVakansiiSerializer
+
+    def get_queryset(self):
+        return Vacansii.objects.filter(owner=self.request.user)
+
+
+    @action(['GET'], detail=True)
+    def otclik(self, request, pk):
         vakansii = self.get_object()
-        if request.user.otklic.filter(vakansii=vakansii).exists():
-            return Response('Вы уже откликнулись на эту вакансию!', status=status.HTTP_400_BAD_REQUEST)
-        Otklic.objects.create(vakansii=vakansii, user=request.user)
-        return Response('Вы успешно откликнулись', status=status.HTTP_201_CREATED)
+        otclik = vakansii.otclik.all()
+        serializer = serializers.OtclikSerializer(otclik, many=True)
+        return Response(serializer.data)
 
-    @action(['POST'], detail=True)
-    def remove_from_otklic(self, request, pk):
-        vakansii = self.get_object()
-        if not request.user.otklic.filter(vakansii=vakansii).exists():
-            return Response('Вы уже откликнулись на эту вакансию!', status=status.HTTP_400_BAD_REQUEST)
-        request.user.otklic.filter(vakansii=vakansii).delete()
-        Otklic.objects.create(vakansii=vakansii, user=request.user)
-        return Response('Вы успешно удалили свой отклик', status=status.HTTP_201_CREATED)
-
-    def get_permissions(self):
-        if self.action in ('create',):
-            return [permissions.IsAuthenticated(), ]
-
-        elif self.action in ('update', 'partial_update', 'destroy,'):
-            return [IsAuthor(), ]
-        else:
-            return [permissions.AllowAny(), ]

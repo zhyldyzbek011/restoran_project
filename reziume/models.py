@@ -1,5 +1,7 @@
 from django.db import models
 
+from account.serializers import User
+
 
 class Reziume(models.Model):
     name = models.CharField(max_length=140, verbose_name='Имя')
@@ -11,6 +13,7 @@ class Reziume(models.Model):
     languages = models.TextField(max_length=150, verbose_name='языки которыми вы владеете')
     experience = models.CharField(max_length=150, verbose_name='Опыт работы')
     personal_info = models.TextField(max_length=500, verbose_name='О себе')
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         verbose_name_plural = 'Добавить резюме'

@@ -54,6 +54,9 @@ INSTALLED_APPS = [
     'vakansii',
     'reziume',
     'otklic',
+    'profiles',
+    'category',
+
 
 
 
@@ -106,6 +109,7 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = 'account.CustomUser'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -170,7 +174,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,

@@ -1,24 +1,48 @@
-from rest_framework import serializers
 
+
+from rest_framework import serializers
 import vakansii
-from vakansii.models import Vacansii
+from account.permissions import IsAuthor
+from otklic.models import Otclik
+
+from vakansii import permissions
+
+from vakansii.models import Vacansii, FilterVakansii
+
+
+class OtclikSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.email')
+
+    class Meta:
+        model = Otclik
+        fields = ('id', 'body', 'owner', 'vakansii')
+
 
 
 class VakansiiSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.email')
 
     class Meta:
         model = Vacansii
         fields = '__all__'
 
-    def otklic(self, vakansii):
-        user = self.context.get('request').user
-        return user.otklic.filter(vakansii=vakansii).exists()
+class UserVakansiiSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.email')
+
+    class Meta:
+        model = Vacansii
+        fields = '__all__'
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        user = self.context.get('request').user
-        if user.is_authenticated:
-            representation['otklic'] = self.otklic(instance)
-
-        representation['otklic_count'] = instance.vakansii.count()
+        representation['otclik_detail'] = OtclikSerializer(instance.otclik.all(), many=True).data
         return representation
+
+
+class FilterAdvertSer(serializers.ModelSerializer):
+    """Для вывода фильтров"""
+    class Meta:
+        model = FilterVakansii
+        fields = ("name", )
+
+

@@ -1,18 +1,18 @@
-from django.contrib.auth import get_user_model
+
 from django.db import models
 
+from account.serializers import User
 from vakansii.models import Vacansii
 
-User = get_user_model()
-
-class Otklic(models.Model):
-    vakansii = models.ForeignKey(Vacansii, on_delete=models.CASCADE, related_name='vakansii')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='otklic')
-
-    class Meta:
-        unique_together = ['vakansii', 'user']
 
 
+class Otclik(models.Model):
+    owner = models.ForeignKey(User, related_name='otclik', on_delete=models.CASCADE)
+    vakansii = models.ForeignKey(Vacansii, related_name='otclik', on_delete=models.CASCADE)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    # link = models.URLField(max_length=200, verbose_name='ссылка на вакансию')
 
-
+    def __str__(self) -> str:
+        return f'{self.owner} -> {self.vakansii} -> {self.created_at}'
 
