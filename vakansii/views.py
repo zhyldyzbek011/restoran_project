@@ -14,10 +14,10 @@ from .serializers import VakansiiSerializer, UserVakansiiSerializer
 
 
 class VacansiiViewSet(ModelViewSet):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, ]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,]
     queryset = Vacansii.objects.all()
     serializer_class = VakansiiSerializer
-    #
+    lookup_field = 'slug'
 
     def perform_create(self, serializer):
         serializer.validated_data['owner'] = self.request.user
@@ -28,6 +28,7 @@ class UserVacansiiList(generics.ListAPIView):
     """Все объявления пользователя"""
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = UserVakansiiSerializer
+    lookup_field = 'slug'
 
     def get_queryset(self):
         return Vacansii.objects.filter(owner=self.request.user)

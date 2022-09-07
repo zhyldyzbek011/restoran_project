@@ -38,21 +38,25 @@ class Vacansii(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     slug = models.SlugField("url", max_length=200, unique=True)
+    created = models.DateTimeField("Дата создания", auto_now_add=True)
 
 
     def save(self, *args, **kwargs):
         # TODO Доработать "slug = subject + id"
-        self.slug = transliteration_rus_eng(self.job_title) + "_" + str(self.id)
+        self.slug = transliteration_rus_eng("http://127.0.0.1:8000/admin/vakansii/vacansii/" + str(self.id))
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.job_title
 
     def get_absolute_url(self):
-        return reverse("advert-detail", kwargs={"category": self.category.slug, "slug": self.slug})
+        return reverse("vakansii_detail", kwargs={"job_title": self.job_title, "slug": self.slug})
 
     class Meta:
         verbose_name_plural = 'Создать ваканцию'
+
+
+
 
 
 class FilterVakansii(models.Model):
@@ -66,5 +70,3 @@ class FilterVakansii(models.Model):
     class Meta:
         verbose_name = "Фильтр"
         verbose_name_plural = "Фильтры"
-
-

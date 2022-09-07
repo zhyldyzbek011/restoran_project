@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'reziume',
     'otklic',
     'profiles',
-    'category',
+
 
 
 
